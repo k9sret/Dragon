@@ -15,7 +15,7 @@ from .creation import (
 )
 
 from .arithmetic import (
-    add, sub, mul, div,
+    add, sub, mul, div, log,
 )
 
 from .ndarray import (

@@ -12,8 +12,9 @@
 #ifndef DRAGON_CORE_MIXEDMEM_H_
 #define DRAGON_CORE_MIXEDMEM_H_
 
-#include "context.h"
-#include "context_cuda.h"
+#include "core/context.h"
+#include "core/context_cuda.h"
+#include "core/context_cnml.h"
 
 namespace dragon {
 
@@ -23,38 +24,48 @@ class MixedMemory {
         UNINITIALIZED,
         STATE_AT_CPU,
         STATE_AT_CUDA,
+        STATE_AT_CNML,
         SWITCHED,
-        SYNCED };
+        SYNCED 
+    };
 
-    MixedMemory() : cpu_ptr_(nullptr), cuda_ptr_(nullptr) {}
+    MixedMemory() : cpu_ptr_(nullptr),
+          cuda_ptr_(nullptr), cnml_ptr_(nullptr) {}
     MixedMemory(const TypeMeta& meta, const size_t nbytes)
-        : meta_(meta), nbytes_(nbytes),
-          cpu_ptr_(nullptr), cuda_ptr_(nullptr) {}
+        : meta_(meta), nbytes_(nbytes), cpu_ptr_(nullptr),
+          cuda_ptr_(nullptr), cnml_ptr_(nullptr) {}
     ~MixedMemory();
 
     const void* cpu_data();
     const void* cuda_data();
+    const void* cnml_data();
+
     void* mutable_cpu_data();
     void* mutable_cuda_data();
+    void* mutable_cnml_data();
+
+    void* malloc_cnml_data();
+
+    cnmlCpuTensor_t& cnml_cpu_tensor();
+    cnmlTensor_t& cnml_mlu_tensor();
+
     void set_cpu_data(void* cpu_ptr, size_t nbytes);
 
     void SwitchToDevice();
     void SwitchToCUDADevice(int device_id);
 
     inline size_t nbytes() const { return nbytes_; }
-
-    inline void* cpu_ptr() { state_ = STATE_AT_CPU; return cpu_ptr_; }
-    inline void* cuda_ptr() { state_ = STATE_AT_CUDA; return cuda_ptr_; }
-
     inline State state() const { return state_; }
     const Map<string, string> info() const;
 
-    void ToCUDA();
     void ToCPU();
+    void ToCUDA();
 
  private:
-    void* cpu_ptr_, *cuda_ptr_;
-    bool own_cpu_ptr_ = true;
+    void* cpu_ptr_, *cuda_ptr_, *cnml_ptr_;
+    cnmlCpuTensor_t cnml_cpu_tensor_ = nullptr;
+    cnmlTensor_t cnml_mlu_tensor_ = nullptr;
+    int own_cpu_ptr_ = 1, ptr_device_ = 0;
     State state_ = UNINITIALIZED;
     size_t nbytes_ = 0;
     TypeMeta meta_;
@@ -62,4 +73,4 @@ class MixedMemory {
 
 }    // namespace dragon
 
-#endif
+#endif    // DRAGON_CORE_MIXEDMEM_H_

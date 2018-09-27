@@ -2,9 +2,10 @@ message(STATUS "Found CXX Module: ${CMAKE_CURRENT_LIST_DIR}")
 
 FILE(GLOB_RECURSE MODULE_FILES *.h *.hpp *.c *.cpp *.cu *.cc)
 FILE(GLOB_RECURSE SRC_FILES ../../src/*.c ../../src/*.cpp ../../src/*.cu ../../src/*.cc)
+LIST(REMOVE_ITEM SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../src/operators/misc/python_op.cc)
 
 # ---[ Target
-if (WITH_CUDA) 
+if (WITH_CUDA)
     CUDA_ADD_LIBRARY(${PROJECT_NAME}_cxx SHARED ${MODULE_FILES} ${SRC_FILES})
     TARGET_LINK_LIBRARIES(${PROJECT_NAME}_cxx  ${CUDA_LIBRARIES} ${CUDA_cublas_LIBRARY} ${CUDA_curand_LIBRARY})
 else ()

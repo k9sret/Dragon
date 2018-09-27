@@ -10,6 +10,7 @@
 # ------------------------------------------------------------
 
 """We move the Module & Parameter to ``torch`` instead of ``torch.nn``,
+
 as it will be reused by the ``torch.ops``.
 
 """
@@ -20,7 +21,7 @@ from .modules.conv import Conv2d, ConvTranspose2d
 from .modules.pooling import MaxPool2d, AvgPool2d
 from .modules.activation import ReLU, LeakyReLU, Sigmoid, Softmax
 from .modules.linear import Linear
-from .modules.loss import CrossEntropyLoss
+from .modules.loss import CrossEntropyLoss, L1Loss, MSELoss, SmoothL1Loss
 from .modules.container import Container, Sequential, ModuleList
 from .modules.batchnorm import BatchNorm1d, BatchNorm2d, BatchNorm3d
 from .modules.affine import Affine

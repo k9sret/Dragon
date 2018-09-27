@@ -49,6 +49,21 @@ template <> void Set<int, CPUContext>(
 #endif  // WITH_SSE
 }
 
+template <> void Set<int64_t, CPUContext>(
+    const int               n,
+    const int64_t           alpha,
+    int64_t*                x,
+    CPUContext*             ctx) {
+    if (alpha == 0) {
+        memset(x, 0, sizeof(int64_t) * n);
+        return;
+    }
+#ifdef WITH_OMP
+    #pragma omp parallel for num_threads(GET_OMP_THREADS(n))
+#endif
+    for (int i = 0; i < n; ++i) x[i] = alpha;
+}
+
 template <> void Set<float16, CPUContext>(
     const int               n,
     const float16           alpha,
@@ -309,6 +324,14 @@ template <> void Log<float, CPUContext>(
     #pragma omp parallel for num_threads(GET_OMP_THREADS(n))
 #endif
     for (int i = 0; i < n; ++i) y[i] = std::log(x[i]);
+}
+
+template <> void Log<float16, CPUContext>(
+    int                     n,
+    const float16*          x,
+    float16*                y,
+    CPUContext*             ctx) {
+    CPU_FP16_NOT_SUPPORTED;
 }
 
 template <> void Square<float, CPUContext>(

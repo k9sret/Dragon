@@ -1,0 +1,56 @@
+------------------------------------------------------------------------
+The list of most significant changes made over time in Dragon.
+
+Dragon 0.2.2.12 (20180927)
+DRAGON_VERSION == 2212
+
+Changes (w.r.t. Dragon 0.2.2.11):
+
+Preview Features:
+
+- Added Cambricon's CNML context.
+
+- Added the support for Int8(Char) Tensor.
+
+- Removed the cuda device id query from pointer.
+
+- Added CuDNN support for ``BiasAddOp``, ``BiasAddGradientOp``.
+
+- Changed the default norm eps from 1e-3 to 1e-5,
+
+  affected: ``BatchNorm``, ``BatchRenorm``, ``GroupNorm``, ``InstanceNorm``, ``L2Norm``.
+
+- [PyTorch] Added ``torch.log`` and ``Tensor.log_``
+
+- [PyTorch] Added ``nn.L1Loss``, ``nn.MSELoss``, ``nn.SmoothL1Loss``.
+
+- [PyTorch] Added ``train`` and ``eval`` mode for Module,
+
+   affected: ``nn.BatchNorm``, ``nn.Dropout``.
+
+- [PyTorch] Deprecated the ``size_average`` and ``reduce`` in
+
+    ``nn.Loss``, added ``reduction`` instead.
+
+- [PyTorch] ``torch.save`` can save both ``torch.Tensor`` and other pickle values.
+
+Bugs fixed:
+
+- Fixed the uncomputed output in ``BiasAddGradientOp``.
+
+- Removed the strictly shape check in ``SmoothL1Op``.
+
+- [PyTorch] Fixed an issue that multiple ``GradientGather`` are triggered by one Operator.
+
+- [PyTorch] Fixed the schema check by in-place fundamental ops.
+
+- [PyTorch] Fixed the missing shape after ``Tensor.copy_``.
+
+- [PyTorch] Fixed an issue that ``Tensor.fill_`` and ``Tensor.zero_``
+
+  will change the data type of an non-empty Tensor.
+
+- [PyTorch] Fixed the Python2 Int(s) check.
+
+------------------------------------------------------------------------
+

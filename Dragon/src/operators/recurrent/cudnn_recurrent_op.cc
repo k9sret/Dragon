@@ -25,8 +25,8 @@ void CuDNNRecurrentOpBase<Context>::ResetDesc() {
             CUDNN_CHECK(cudnnDropoutGetStatesSize(
                 ctx()->cudnn_handle(), &states_size));
             std::lock_guard<std::mutex> lk(CUDAContext::mutex());
-            Tensor* states = ws()->CreateTensor("/share/cudnn/dropout:" +
-                dragon_cast<string, unsigned long long>(random_seed) + "/states");
+            Tensor* states = ws()->CreateTensor("/share/cudnn/dropout:" 
+                + std::to_string(random_seed) + "/states");
             if (states->count() > 0) {
                 auto* Sdata = states->template mutable_data<uint8_t, Context>();
                 CUDNN_CHECK(cudnnRestoreDropoutDescriptor(

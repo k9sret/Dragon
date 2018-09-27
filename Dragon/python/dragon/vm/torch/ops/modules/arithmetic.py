@@ -38,3 +38,26 @@ class Fundamental(BaseModule):
         inputs = [x1, x2]; self.unify_devices(inputs)
         outputs = [y] if y else [self.register_output(x1.dtype)]
         return self.run(inputs, outputs)
+
+
+class Log(BaseModule):
+    def __init__(self, key, ctx, **kwargs):
+        super(Log, self).__init__(key, ctx, **kwargs)
+        self.register_arguments()
+        self.register_op()
+
+    def register_arguments(self):
+        """No arguments for Log op."""
+        pass
+
+    def register_op(self):
+        self.op_meta = {
+            'op_type': 'Log',
+            'n_inputs': 1, 'n_outputs': 1,
+            'arguments': {}
+        }
+
+    def forward(self, x, y):
+        inputs = [x]; self.unify_devices(inputs)
+        outputs = [y] if y else [self.register_output(x.dtype)]
+        return self.run(inputs, outputs)

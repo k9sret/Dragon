@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     unzip \
     ssh \
     vim \
+    libtbb-dev \
     libnuma-dev \
     libprotobuf-dev \
     protobuf-compiler \

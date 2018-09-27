@@ -276,6 +276,55 @@ template <> void Div<float16, CUDAContext>(
 #endif
 }
 
+template <typename T>
+__global__ void _LogHalf(
+    const int               n,
+    const T*                a,
+    T*                      y) {
+    CUDA_1D_KERNEL_LOOP(idx, n) {
+#if __CUDA_ARCH__ >= 530
+        y[idx] = hlog(a[idx]);
+#endif
+    }
+}
+
+template <typename T>
+__global__ void _LogHalf2(
+    const int               n,
+    const T*                a,
+    T*                      y) {
+    CUDA_1D_KERNEL_LOOP(idx, n) {
+#if __CUDA_ARCH__ >= 530
+        y[idx] = h2log(a[idx]);
+#endif
+    }
+}
+
+template <> void Log<float16, CUDAContext>(
+    int                     n,
+    const float16*          x,
+    float16*                y,
+    CUDAContext*            ctx) {
+#ifdef WITH_CUDA_FP16
+    if ((n & 1) == 0) {
+        _LogHalf2<half2>
+            << < CUDA_BLOCKS(n >> 1), CUDA_THREADS,
+                 0, ctx->cuda_stream() >> >(n >> 1,
+                    reinterpret_cast<const half2*>(x),
+                        reinterpret_cast<half2*>(y));
+    }
+    else {
+        _LogHalf<half>
+            << < CUDA_BLOCKS(n), CUDA_THREADS,
+                 0, ctx->cuda_stream() >> >(n,
+                     reinterpret_cast<const half*>(x),
+                        reinterpret_cast<half*>(y));
+    }
+#else
+    CUDA_FP16_NOT_COMPILED;
+#endif
+}
+
 #ifdef WITH_CUDA_FP16
 template <typename T>
 __global__ void _SquareHalf(

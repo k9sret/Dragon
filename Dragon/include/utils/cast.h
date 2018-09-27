@@ -28,6 +28,10 @@ template<> inline int dragon_cast<int, float>(float val) {
     return static_cast<int>(val);
 }
 
+template<> inline int64_t dragon_cast<int64_t, float>(float val) {
+    return static_cast<int64_t>(val);
+}
+
 template<> inline float dragon_cast<float, float>(float val) {
     return val; 
 }

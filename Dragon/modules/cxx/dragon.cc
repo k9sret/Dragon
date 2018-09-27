@@ -29,7 +29,8 @@ Workspace* CreateWorkspace(const std::string& name){
 Workspace* ResetWorkspace(const std::string& name) {
     std::unique_lock<std::mutex> lock(g_mutex);
     CHECK(g_workspaces.count(name))
-        << "\nWorkspace(" << name << ") does not exist, can not be reset.";
+        << "\nWorkspace(" << name << ") does not exist."
+        << "\nCan not be reset.";
     LOG(INFO) << "Reset the Workspace(" << name << ").";
     g_workspaces[name].reset(new Workspace(name));
     for (auto& sub_workspace : sub_workspaces[name]) {
@@ -43,7 +44,8 @@ Workspace* ResetWorkspace(const std::string& name) {
 void ReleaseWorkspace(const std::string& name) {
     std::unique_lock<std::mutex> lock(g_mutex);
     CHECK(g_workspaces.count(name))
-        << "\nWorkspace(" << name << ") does not exist, can not be released.";
+        << "\nWorkspace(" << name << ") does not exist."
+        << "\nCan not be released.";
     LOG(INFO) << "Release the Workspace(" << name << ").";
     g_workspaces[name].reset();
     g_workspaces.erase(name);

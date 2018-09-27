@@ -13,6 +13,7 @@
 #define DRAGON_CORE_COMMON_H_
 
 #include <ctime>
+#include <random>
 #include <climits>
 #include <memory>
 #include <string>
@@ -52,9 +53,9 @@ using Set = std::unordered_set<Value> ;
 /*
  * Define the Kernel version.
  *
- * | Major(2) | Minor(2) | Patch(11) |
+ * | Major(2) | Minor(2) | Patch(12) |
  */
-#define DRAGON_VERSION 2211
+#define DRAGON_VERSION 2212
 
 /*
  * Define the default random seed.

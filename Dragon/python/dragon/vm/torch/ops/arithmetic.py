@@ -16,7 +16,7 @@ from __future__ import print_function
 from dragon.vm.torch.tensor import Tensor
 from dragon.vm.torch.ops.primitive import MakeContext, WrapScalar
 from dragon.vm.torch.ops.factory import get_module
-from dragon.vm.torch.ops.modules.arithmetic import Fundamental
+from dragon.vm.torch.ops.modules.arithmetic import Fundamental, Log
 
 
 def _fundamental(input, value, op='Add', out=None):
@@ -42,6 +42,13 @@ def _rfundamental(input, value, op='RAdd', out=None):
     key = 'torch/ops/{}/{}:{}'.format(op.lower(), ctx[0].lower(), ctx[1])
     module = get_module(Fundamental, key, ctx, op_type=op)
     return module.forward(value, input, out)
+
+
+def _log(input, out=None):
+    ctx = MakeContext(inputs=[input])
+    key = 'torch/ops/log/{}:{}'.format(ctx[0].lower(), ctx[1])
+    module = get_module(Log, key, ctx)
+    return module.forward(input, out)
 
 
 def add(input, value, out=None):
@@ -126,3 +133,22 @@ def div(input, value, out=None):
 
     """
     return _fundamental(input, value, out=out, op='Div')
+
+
+def log(input, out=None):
+    """Compute the natural logarithm of input.
+
+    Parameters
+    ----------
+    input : vm.torch.Tensor
+        The input tensor.
+    out : vm.torch.Tensor or None
+        The output tensor.
+
+    Returns
+    -------
+    vm.torch.Tensor
+        The output tensor.
+
+    """
+    return _log(input, out)

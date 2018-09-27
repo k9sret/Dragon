@@ -173,8 +173,7 @@ void cudnnSetTensor4dDesc(
         << "\nThe num of dimensions of Tensor("
         << tensor->name() << ") "
         << "should be 4, but got " << tensor->ndim() << ".";
-    cudnnSetTensor4dDesc<T>(
-        desc, data_format, tensor->dims());
+    cudnnSetTensor4dDesc<T>(desc, data_format, tensor->dims());
 }
 
 template <typename T>
@@ -186,8 +185,7 @@ void cudnnSetTensor5dDesc(
         << "\nThe num of dimensions of Tensor("
         << tensor->name() << ") "
         << "should be 5, but got " << tensor->ndim() << ".";
-    cudnnSetTensor5dDesc<T>(
-        desc, data_format, tensor->dims());
+    cudnnSetTensor5dDesc<T>(desc, data_format, tensor->dims());
 }
 
 template <typename T>

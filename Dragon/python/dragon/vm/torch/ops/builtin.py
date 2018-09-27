@@ -21,12 +21,17 @@ from dragon.vm.torch.execute_engine import RunOperator
 from dragon.vm.torch.ops.factory import get_module
 from dragon.vm.torch.autograd.grad_mode import no_grad
 from dragon.vm.torch.ops.primitive import MakeContext
-from dragon.vm.torch.ops.arithmetic import _fundamental, _rfundamental
+
+from dragon.vm.torch.ops.arithmetic import (
+    _fundamental, _rfundamental, _log,
+)
+
 from dragon.vm.torch.ops.ndarray import (
     reshape, squeeze, unsqueeze,
     _permute, _repeat, _crop,
     _fill, _reduce, _arg_reduce,
 )
+
 from dragon.vm.torch.ops.modules.dtype import AsType
 
 
@@ -53,9 +58,13 @@ def copy_(self, src, non_blocking=False):
         The ``self`` tensor.
 
     """
+    # Copy memory
     FromTensor(
         src, CTX_TO_DEVICE_OPTION[tuple(src._ctx)],
         self.name, CTX_TO_DEVICE_OPTION[tuple(self._ctx)])
+    # Transfer the static shape if necessary
+    self._static_shape = src.size() \
+        if self._static_shape else None
     return self
 
 
@@ -295,6 +304,22 @@ def rdiv(self, value):
     return _rfundamental(self, value, op='RDiv')
 
 
+def log(self):
+    """Compute the natural logarithm of this tensor.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    vm.torch.Tensor
+        The log tensor.
+
+    """
+    return _log(self)
+
+
 Tensor.add = add
 Tensor.add_ = add_
 Tensor.__radd__ = radd
@@ -308,6 +333,7 @@ Tensor.div = div
 Tensor.div_ = div_
 Tensor.__rdiv__ = rdiv
 Tensor.__rtruediv__ = rdiv
+Tensor.log = log
 
 
 ##############################################

@@ -32,8 +32,8 @@ void CuDNNDropoutOp<Context>::RunWithType() {
                 ctx()->cudnn_handle(), &states_size));
             std::lock_guard<std::mutex> lk(CUDAContext::mutex());
             Tensor* states = ws()->CreateTensor(
-                "/share/cudnn/dropout:" + dragon_cast<string,
-                    unsigned long long>(random_seed) + "/states");
+                "/share/cudnn/dropout:" + std::to_string(
+                    random_seed) + "/states");
             if (states->count() > 0) {
                 auto* Sdata = states->template mutable_data<uint8_t, Context>();
                 CUDNN_CHECK(cudnnRestoreDropoutDescriptor(
@@ -89,14 +89,16 @@ void CuDNNDropoutGradientOp<Context>::RunWithType() {
                 ctx()->cudnn_handle(), &states_size));
             std::lock_guard<std::mutex> lk(CUDAContext::mutex());
             Tensor* states = ws()->CreateTensor(
-                "/share/cudnn/dropout:" + dragon_cast<string,
-                    unsigned long long>(random_seed) + "/states");
+                "/share/cudnn/dropout:" + std::to_string(
+                    random_seed) + "/states");
             if (states->count() > 0) {
                 auto* Sdata = states->template mutable_data<uint8_t, Context>();
                 CUDNN_CHECK(cudnnRestoreDropoutDescriptor(
                     dropout_desc, ctx()->cudnn_handle(), prob(),
                         Sdata, states_size, random_seed));
-            } else { LOG(FATAL) << "Missing states with seed: " << random_seed; }
+            } else { 
+                LOG(FATAL) << "Missing states with seed: " << random_seed; 
+            }
         }
         auto* dYdata = Input(-1).template data<T, Context>();
         auto* dXdata = Output(0)->template mutable_data<T, Context>();

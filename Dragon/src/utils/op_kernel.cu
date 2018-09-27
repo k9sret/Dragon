@@ -2856,8 +2856,7 @@ __global__ void _BiasAdd_NCHW(
     const T*                bias,
     T*                      y) {
     CUDA_1D_KERNEL_LOOP(idx, count) {
-        const int bias_idx = (idx / inner_dim) % dim;
-        y[idx] += bias[bias_idx];
+        y[idx] += bias[(idx / inner_dim) % dim];
     }
 }
 

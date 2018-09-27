@@ -66,36 +66,63 @@ template<> class CUDNNType<float16> {
 #endif
 
 template <typename T>
-void cudnnSetTensorDesc(cudnnTensorDescriptor_t* desc, Tensor* tensor);
+void cudnnSetTensorDesc(
+    cudnnTensorDescriptor_t*            desc,
+    Tensor*                             tensor);
 
 template <typename T>
-void cudnnSetTensor4dDesc(cudnnTensorDescriptor_t* desc, const string& data_format, Tensor* tensor);
+void cudnnSetTensor4dDesc(
+    cudnnTensorDescriptor_t*            desc,
+    const string&                       data_format,
+    Tensor*                             tensor);
 
 template <typename T>
-void cudnnSetTensor5dDesc(cudnnTensorDescriptor_t* desc, const string& data_format, Tensor* tensor);
+void cudnnSetTensor5dDesc(
+    cudnnTensorDescriptor_t*            desc,
+    const string&                       data_format,
+    Tensor*                             tensor);
 
 template <typename T>
-void cudnnSetTensor3dDesc(cudnnTensorDescriptor_t* desc, const string& data_format, Tensor* tensor);
+void cudnnSetTensor3dDesc(
+    cudnnTensorDescriptor_t*            desc,
+    const string&                       data_format,
+    Tensor*                             tensor);
 
 template <typename T>
-void cudnnSetTensorDesc(cudnnTensorDescriptor_t* desc, const std::vector<int64_t>& dims);
+void cudnnSetTensorDesc(
+    cudnnTensorDescriptor_t*            desc,
+    const std::vector<int64_t>&         dims);
 
 template <typename T>
-void cudnnSetTensor4dDesc(cudnnTensorDescriptor_t* desc, const string& data_format, const std::vector<int64_t>& dims);
+void cudnnSetTensor4dDesc(
+    cudnnTensorDescriptor_t*            desc,
+    const string&                       data_format,
+    const std::vector<int64_t>&         dims);
 
 template <typename T>
-void cudnnSetTensor4dDescWithGroup(cudnnTensorDescriptor_t* desc, const string& data_format, const std::vector<int64_t>& dims, const int64_t group);
+void cudnnSetTensor4dDescWithGroup(
+    cudnnTensorDescriptor_t*            desc,
+    const string&                       data_format,
+    const std::vector<int64_t>&         dims,
+    const int64_t                       group);
 
 template <typename T>
-void cudnnSetTensor5dDesc(cudnnTensorDescriptor_t* desc, const string& data_format, const std::vector<int64_t>& dims);
+void cudnnSetTensor5dDesc(
+    cudnnTensorDescriptor_t*            desc,
+    const string&                       data_format,
+    const std::vector<int64_t>&         dims);
 
 template <typename T>
-void cudnnSetTensor3dDesc(cudnnTensorDescriptor_t* desc, const string& data_format, const std::vector<int64_t>& dims);
+void cudnnSetTensor3dDesc(
+    cudnnTensorDescriptor_t*            desc,
+    const string&                       data_format,
+    const std::vector<int64_t>&         dims);
 
 template <typename T>
-void cudnnSetTensorDesc(cudnnTensorDescriptor_t* desc,
-                        const std::vector<int64_t>& dims,
-                        const std::vector<int64_t>& strides);
+void cudnnSetTensorDesc(
+    cudnnTensorDescriptor_t*            desc,
+    const std::vector<int64_t>&         dims,
+    const std::vector<int64_t>&         strides);
 
 }
 

@@ -82,8 +82,6 @@ class LRNGradientOp : public Operator<Context> {
 
 #ifdef WITH_CUDNN
 
-#include "utils/cudnn_device.h"
-
 template <class Context>
 class CuDNNLRNOp final : public LRNOp<Context> {
  public:

@@ -53,6 +53,22 @@ template <> void Set<int, CUDAContext>(
     }
 }
 
+template <> void Set<int64_t, CUDAContext>(
+    const int               n,
+    const int64_t           alpha,
+    int64_t*                x,
+    CUDAContext*            ctx) {
+    if (alpha == 0) {
+        CUDA_CHECK(cudaMemsetAsync(x, 0,
+            sizeof(int64_t) * n, ctx->cuda_stream()));
+    }
+    else {
+        _Set<int64_t>
+            << < CUDA_BLOCKS(n), CUDA_THREADS,
+                 0, ctx->cuda_stream() >> >(n, alpha, x);
+    }
+}
+
 template <> void RandomUniform<uint32_t, CUDAContext>(
     const int               n,
     const float             low,

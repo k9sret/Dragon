@@ -32,15 +32,12 @@ void CuDNNConv2dTransposeOp<Context>::ResetDesc() {
 
     //  determine the bias shape
     if (HasBias()) {
-        bias_offset = num_output / cudnn_group;
         if (data_format == "NCHW") {
-            cudnnSetTensor4dDesc<T>(
-                &bias_desc, data_format,
-                    vector<TIndex>({ 1, bias_offset, 1, 1 }));
+            cudnnSetTensor4dDesc<T>(&bias_desc, data_format,
+                vector<TIndex>({ 1, num_output, 1, 1 }));
         } else if (data_format == "NHWC") {
-            cudnnSetTensor4dDesc<T>(
-                &bias_desc, data_format,
-                    vector<TIndex>({ 1, 1, 1, bias_offset }));
+            cudnnSetTensor4dDesc<T>(&bias_desc, data_format,
+                vector<TIndex>({ 1, 1, 1, num_output }));
         }
     }
 
@@ -86,12 +83,13 @@ void CuDNNConv2dTransposeOp<Context>::RunWithType() {
                 input_desc, Xdata + x_offset * g,
                     conv_desc, fwd_algo, WSdata, fwd_data_size,
             CUDNNType<T>::zero, output_desc, Ydata + y_offset * g));
-        if (HasBias()) {
-            auto* bias = Input(2).template data<T, Context>();
-            CUDNN_CHECK(cudnnAddTensor(cudnn_handle,
-                CUDNNType<T>::one, bias_desc, bias + bias_offset * g,
-                    CUDNNType<T>::one, output_desc, Ydata + y_offset * g));
-        }
+    }
+
+    if (HasBias()) {
+        auto* Bdata = Input(2).template data<T, Context>();
+        CUDNN_CHECK(cudnnAddTensor(cudnn_handle,
+            CUDNNType<T>::one, bias_desc, Bdata,
+                CUDNNType<T>::one, output_desc, Ydata));
     }
 }
 
@@ -179,15 +177,12 @@ void CuDNNConv2dTransposeGradientOp<Context>::ResetDesc() {
 
     //  determine the bias shape
     if (HasBias()) {
-        bias_offset = num_output / cudnn_group;
         if (data_format == "NCHW") {
-            cudnnSetTensor4dDesc<T>(
-                &bias_desc, data_format,
-                    vector<TIndex>({ 1, bias_offset, 1, 1 }));
+            cudnnSetTensor4dDesc<T>(&bias_desc, data_format,
+                vector<TIndex>({ 1, num_output, 1, 1 }));
         } else if (data_format == "NHWC") {
-            cudnnSetTensor4dDesc<T>(
-                &bias_desc, data_format,
-                    vector<TIndex>({ 1, 1, 1, bias_offset }));
+            cudnnSetTensor4dDesc<T>(&bias_desc, data_format,
+                vector<TIndex>({ 1, 1, 1, num_output }));
         }
     }
 
@@ -234,13 +229,14 @@ void CuDNNConv2dTransposeGradientOp<Context>::RunWithType() {
 
     auto cudnn_handle = ctx()->cudnn_handle();
 
+    if (Output(2)->name() != "ignore") {
+        T* dBdata = Output(2)->template mutable_data<T, Context>(ctx());
+        CUDNN_CHECK(cudnnConvolutionBackwardBias(cudnn_handle,
+            CUDNNType<T>::one, input_desc, dYdata,
+                CUDNNType<T>::one, bias_desc, dBdata));
+    }
+
     for (int g = 0; g < cudnn_group; g++) {
-        if (Output(2)->name() != "ignore") {
-            T* dBdata = Output(2)->template mutable_data<T, Context>(ctx());
-            CUDNN_CHECK(cudnnConvolutionBackwardBias(cudnn_handle,
-                CUDNNType<T>::one, input_desc, dYdata + y_offset * g,
-                    CUDNNType<T>::one, bias_desc, dBdata + bias_offset * g));
-        }
         if (Output(1)->name() != "ignore") {
             auto* Xdata = Input(0).template data<T, Context>();
             auto* dWdata = Output(1)->template mutable_data<T, Context>(ctx());

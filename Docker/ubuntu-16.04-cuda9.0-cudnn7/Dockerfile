@@ -9,6 +9,7 @@ RUN rm /etc/apt/sources.list.d/cuda.list && rm /etc/apt/sources.list.d/nvidia-ml
     unzip \
     ssh \
     vim \
+    libtbb-dev \
     libnuma-dev \
     libprotobuf-dev \
     protobuf-compiler \
